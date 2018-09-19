@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>wc_accuracy</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/static/wc_accuracy/d3/d3.js"></script><!--Data-Driven Documents-->
+    <script src="/static/wc_accuracy/jspsych-6.0.3/jspsych.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/jspsych-image-keyboard-response.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/jspsych-image-slider-response.js"></script>
+    <script src="/static/common/js_experiments/json_test.json"></script>
+    <script src="/static/common/js/lcnl-helpers.js"></script>
+    <link href="/static/wc_accuracy/jspsych-6.0.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+  </head>
+  <body></body>
+
+  <script>
+
+  /* create timeline */
+  var timeline = [];
+
+/*         *** Assuming this works, this will be the how we collect participant info ***
+  var turk_info = { jsPsych.data.urlVariable()};
+  timeline.push(turk_info);
+*/
+
+/*  *** Welcome screen ***  */
+  var welcome = {
+    type: "html-keyboard-response",
+    stimulus: "Thank you for your particpation, please press any key to continue"
+  };
+  timeline.push(welcome);
+/*  *** Instructions, you might want to change the wording*** */
+
+  var instructions = {
+    type: "html-keyboard-response",
+    stimulus: "<p>Your task will be rating how accurately a provided name describes an image.</p><p>The scale you will use is a numeric scale, from 1 to 7, with 1 being incredibly low accuracy, and 7 being exactly the word you would use to describe the image.</p><p>The experiment will begin when you press any key on your keyboard.</p>"
+  }
+  timeline.push(instructions);
+/*  ***
+  var example = {
+    type: "image-keyboard-response",
+    stimulus: static/wc/img/image_name.jg, --- This will be the image of the example. Because we haven't figured out how to do it in the way we would like to, I figured we would fill this in later,
+    prompt: "press any key to begin the experiment"
+  }
+  timeline.push(example);
+*/
+
+/*  *** Stimuli, this is not counter balanced. It is simply a list of all the stimuli ***  */
+  var test_stimuli = [
+    {
+        "stimulus": "/static/wc_accuracy/img/fimg01.jpg",
+        "data": "fill",
+        "word1": "trophy",
+        "word2": "telephone"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg02.jpg",
+        "data": "fill",
+        "word1": "mixer",
+        "word2": "envelope"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg03.jpg",
+        "data": "fill",
+        "word1": "gas",
+        "word2": "sweater"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg04.jpg",
+        "data": "fill",
+        "word1": "drum",
+        "word2": "lightbulb"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg05.jpg",
+        "data": "fill",
+        "word1": "gun",
+        "word2": "geode"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg06.jpg",
+        "data": "fill",
+        "word1": "sailboat",
+        "word2": "iguana"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg07.jpg",
+        "data": "fill",
+        "word1": "teapot",
+        "word2": "umbrella"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg08.jpg",
+        "data": "fill",
+        "word1": "parrot",
+        "word2": "needle"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg09.jpg",
+        "data": "fill",
+        "word1": "microscope",
+        "word2": "porcupine"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg10.jpg",
+        "data": "fill",
+        "word1": "panda",
+        "word2": "muffin"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg11.jpg",
+        "data": "fill",
+        "word1": "axe",
+        "word2": "violin"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg12.jpg",
+        "data": "fill",
+        "word1": "bucket",
+        "word2": "basketball"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg13.jpg",
+        "data": "fill",
+        "word1": "bottle",
+        "word2": "corn"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg14.jpg",
+        "data": "fill",
+        "word1": "telescope",
+        "word2": "opera"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg15.jpg",
+        "data": "fill",
+        "word1": "broom",
+        "word2": "rope"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg16.jpg",
+        "data": "fill",
+        "word1": "mop",
+        "word2": "kangaroo"
+      },
+      {
+        "stimulus": "/static/wc_accuracy/img/fimg17.jpg",
+        "data": "fill",
+        "word1": "cloud",
+        "word2": "queen"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg18.jpg",
+        "data": "fill",
+        "word1": "arm",
+        "word2": "dart"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg19.jpg",
+        "data": "fill",
+        "word1": "ball",
+        "word2": "yarn"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg20.jpg",
+        "data": "fill",
+        "word1": "clock",
+        "word2": "watermelon"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg21.jpg",
+        "data": "fill",
+        "word1": "cow",
+        "word2": "ankle"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg22.jpg",
+        "data": "fill",
+        "word1": "vacuum",
+        "word2": "flame"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg23.jpg",
+        "data": "fill",
+        "word1": "candle",
+        "word2": "crayon"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg24.jpg",
+        "data": "fill",
+        "word1": "bowl",
+        "word2": "pride"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg25.jpg",
+        "data": "fill",
+        "word1": "bell",
+        "word2": "garnish"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg26.jpg",
+        "data": "fill",
+        "word1": "cigarette",
+        "word2": "rag"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg27.jpg",
+        "data": "fill",
+        "word1": "door",
+        "word2": "shore"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg28.jpg",
+        "data": "fill",
+        "word1": "button",
+        "word2": "lock"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg29.jpg",
+        "data": "fill",
+        "word1": "crown",
+        "word2": "emperor"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg30.jpg",
+        "data": "fill",
+        "word1": "nail",
+        "word2": "straw"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg31.jpg",
+        "data": "fill",
+        "word1": "penguin",
+        "word2": "ice"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg32.jpg",
+        "data": "fill",
+        "word1": "dog",
+        "word2": "diamond"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg33.jpg",
+        "data": "fill",
+        "word1": "carrot",
+        "word2": "narwhal"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg34.jpg",
+        "data": "fill",
+        "word1": "chair",
+        "word2": "vase"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg35.jpg",
+        "data": "fill",
+        "word1": "horse",
+        "word2": "mirror"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg36.jpg",
+        "data": "fill",
+        "word1": "pumpkin",
+        "word2": "farm"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg37.jpg",
+        "data": "fill",
+        "word1": "apple",
+        "word2": "tarp"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg38.jpg",
+        "data": "fill",
+        "word1": "strawberry",
+        "word2": "honey"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg39.jpg",
+        "data": "fill",
+        "word1": "elephant",
+        "word2": "zebra"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/fimg40.jpg",
+        "data": "fill",
+        "word1": "fork",
+        "word2": "jam"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt01.jpg",
+        "data": "target",
+        "word1": "peas",
+        "word2": "peapod"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt02.jpg",
+        "data": "target",
+        "word1": "pillar",
+        "word2": "column"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt03.jpg",
+        "data": "target",
+        "word1": "skate",
+        "word2": "roller skate"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt04.jpg",
+        "data": "target",
+        "word1": "coat",
+        "word2": "jacket"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt05.jpg",
+        "data": "target",
+        "word1": "brickwall",
+        "word2": "brick"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt06.jpg",
+        "data": "target",
+        "word1": "doctor",
+        "word2": "man"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt07.jpg",
+        "data": "target",
+        "word1": "garbage",
+        "word2": "trash"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt08.jpg",
+        "data": "target",
+        "word1": "ladybug",
+        "word2": "bug"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt09.jpg",
+        "data": "target",
+        "word1": "underwear",
+        "word2": "diaper"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt10.jpg",
+        "data": "target",
+        "word1": "cube",
+        "word2": "box"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt11.jpg",
+        "data": "target",
+        "word1": "scale",
+        "word2": "balance"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt12.jpg",
+        "data": "target",
+        "word1": "rocket",
+        "word2": "missile"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt13.jpg",
+        "data": "target",
+        "word1": "tear",
+        "word2": "crying"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt14.jpg",
+        "data": "target",
+        "word1": "glass",
+        "word2": "cup"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt15.jpg",
+        "data": "target",
+        "word1": "desert",
+        "word2": "cactus"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt16.jpg",
+        "data": "target",
+        "word1": "teeth",
+        "word2": "dentures"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt17.jpg",
+        "data": "target",
+        "word1": "wolf",
+        "word2": "dog"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt18.jpg",
+        "data": "target",
+        "word1": "waffle",
+        "word2": "pancake"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt19.jpg",
+        "data": "target",
+        "word1": "rug",
+        "word2": "carpet"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt20.jpg",
+        "data": "target",
+        "word1": "rose",
+        "word2": "flower"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt21.jpg",
+        "data": "target",
+        "word1": "icecream",
+        "word2": "ice cream cone"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt22.jpg",
+        "data": "target",
+        "word1": "arrow",
+        "word2": "left"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt23.jpg",
+        "data": "target",
+        "word1": "mousetrap",
+        "word2": "trap"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt24.jpg",
+        "data": "target",
+        "word1": "cannon",
+        "word2": "war"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt25.jpg",
+        "data": "target",
+        "word1": "belt",
+        "word2": "collar"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt26.jpg",
+        "data": "target",
+        : 26,
+        : 0.8,
+        "word1": "bus",
+        "word2": "school bus"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt27.jpg",
+        "data": "target",
+        "word1": "swing",
+        "word2": "swing set"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt28.jpg",
+        "data": "target",
+        "word1": "barrel",
+        "word2": "ball"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt29.jpg",
+        "data": "target",
+        "word1": "chain",
+        "word2": "rings"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt30.jpg",
+        "data": "target",
+        "word1": "camel",
+        "word2": "hump"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt31.jpg",
+        "data": "target",
+        "word1": "road",
+        "word2": "highway"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt32.jpg",
+        "data": "target",
+        "word1": "anchor",
+        "word2": "Navy"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt33.jpg",
+        "data": "target",
+        "word1": "hat",
+        "word2": "cap"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt34.jpg",
+        "data": "target",
+        "word1": "clown",
+        "word2": "circus"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt35.jpg",
+        "data": "target",
+        "word1": "book",
+        "word2": "read"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt36.jpg",
+        "data": "target",
+        "word1": "bed",
+        "word2": "sleep"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt37.jpg",
+        "data": "target",
+        "word1": "frog",
+        "word2": "toad"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt38.jpg",
+        "data": "target",
+        "word1": "banana",
+        "word2": "fruit"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt39.jpg",
+        "data": "target",
+        "word1": "balloon",
+        "word2": "party"
+       },
+       {
+        "stimulus": "/static/wc_accuracy/img/trgt40.jpg",
+        "data": "target",
+        "word1": "butterfly",
+        "word2": "insect"
+       }
+    ]
+  ]
+
+  var fixation = {
+    type: "html-keyboard-response",
+    stimulus: '<div style="font-size:60px;">+</div>',
+    choices: jsPsych.NO_KEYS,
+    trial_duration: 1500,
+    data: {test_part: 'fixation'}
+  }
+
+  var word1 = {
+    type: "image-slider-response",
+    stimulus: jsPsych.timelineVariable("stimulus"),
+    labels: ['1','2','3','4','5','6','7'],
+    prompt: function(){ return "How good is this word for describing this picture?<br>"+"<strong>"+jsPsych.timelineVariable("word1", true)+"</strong>"+"&nbsp;&nbsp;&nbsp;&nbsp;"+jsPsych.timelineVariable("word2", true)+"<br>";},
+    data: {test_part: jsPsych.timelineVariable("data")}
+  }
+
+  var word2 = {
+    type: "image-slider-response",
+    stimulus: jsPsych.timelineVariable("stimulus"),
+    labels: ['1','2','3','4','5','6','7'],
+    prompt: function(){ return "How good is this word for describing this picture?<br>"+jsPsych.timelineVariable("word1", true)+"&nbsp;&nbsp;&nbsp;&nbsp;"+"<strong>"+jsPsych.timelineVariable("word2", true)+"</strong><br>";},
+    data: {test_part: jsPsych.timelineVariable("data")}
+  }
+
+/*  *** This is what defies the flow of the experiment, If you wanted to, say, add a fixation between word1 and word2, it would look like "timeline:[fixation,word1,fixation,word2], etc."*** */
+  var test_procedure = {
+    timeline: [fixation, word1, word2],
+    timeline_variables: test_stimuli,
+    randomize_order: true
+  }
+  timeline.push(test_procedure);
+
+
+  jsPsych.init({
+    timeline: timeline,
+    on_finish: function(){
+      jsPsych.data.get().addToAll({subject_id: turk_info.workerID});
+      jsPsych.data.displayData('JSON');
+      //jsPsych.data.localSave(jsPsych.data.getData()[0]["subject"] + ".csv", 'csv');
+      sendJSONData(jsPsych.data.getLastTimelineData().values(),"subject");
+    }
+  });
+  </script>
+</html>
