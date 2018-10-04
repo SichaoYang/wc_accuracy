@@ -2,6 +2,10 @@
  * jsPsych plugin for binding multiple sliders to a single image stimulus.
  */
 
+let dragged = 0;  // If the sliders have been dragged
+function drag(id) {
+    if ((dragged |= id) == 3) document.querySelector('#wc_accuracy-next').style.visibility = "visible";
+}
 
 jsPsych.plugins['image-2slider-2response'] = (function () {
 
@@ -73,11 +77,6 @@ jsPsych.plugins['image-2slider-2response'] = (function () {
                 default: '',
                 description: 'The word below the second slider.'
             },
-            participant_index: {
-                type: jsPsych.plugins.parameterType.INT,
-                default: null,
-                description: 'Participant index number.'
-            },
             trial_duration: {
                 type: jsPsych.plugins.parameterType.INT,
                 default: null,
@@ -90,8 +89,8 @@ jsPsych.plugins['image-2slider-2response'] = (function () {
         function slider_div(id) {
             let slider_div = '<div class="jspsych-image-slider-response-container" style="position:relative;">';
             slider_div += '<input type="range" value="' + trial.start + '" min="' + trial.min + '" max="' + trial.max +
-                '" step="'+ trial.step + '" style="width: 100%;" id="' + id + '">';
-            slider_div += '<div>';
+                '" step="'+ trial.step + '" style="width: 100%;" id="wc_accuracy-slider' + id +
+                '" onmouseup="drag(' + id + ')">';
             for (let j = 0; j < trial.labels.length; j++) {
                 const width = 100 / (trial.labels.length - 1);
                 const left_offset = (j * (100 / (trial.labels.length - 1))) - (width / 2);
@@ -110,11 +109,11 @@ jsPsych.plugins['image-2slider-2response'] = (function () {
         img.onload = function () {
             div.appendChild(img);
             let html = '<p>' + trial.prompt + '</p>';
-            html += slider_div("wc_accuracy-slider1");
+            html += slider_div("1");
             html += '<p><strong>' + trial.word1 + '</strong></p>';
-            html += slider_div("wc_accuracy-slider2");
+            html += slider_div("2");
             html += '<p><strong>' + trial.word2 + '</strong></p>';
-            html += '<button id="wc_accuracy-next" class="jspsych-btn">' + trial.button_label + '</button>';  // submit
+            html += '<button id="wc_accuracy-next" class="jspsych-btn" style="visibility:hidden">' + trial.button_label + '</button>';  // submit
             html += '</div>';
             div.innerHTML += html;
             display_element.appendChild(div);
@@ -126,8 +125,7 @@ jsPsych.plugins['image-2slider-2response'] = (function () {
             };
 
             display_element.querySelector('#wc_accuracy-next').addEventListener('click', function () {
-                // measure response time
-                const endTime = (new Date()).getTime();
+                const endTime = (new Date()).getTime();  // measure response time
                 response.rt = endTime - startTime;
                 response.word1_response = display_element.querySelector('#wc_accuracy-slider1').value;
                 response.word2_response = display_element.querySelector('#wc_accuracy-slider2').value;
@@ -140,8 +138,6 @@ jsPsych.plugins['image-2slider-2response'] = (function () {
 
                 // save data
                 const trial_data = {
-                    "participant#": trial.participant_index,
-                    "trial#": jsPsych.progress().current_trial_global / 2 - 2,  // instr x4 fixation trial fixation ...
                     "word1": trial.word1,
                     "word2": trial.word2,
                     "rt": response.rt,

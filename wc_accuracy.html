@@ -3,15 +3,13 @@
 <head>
     <title>wc_accuracy</title>
     <meta charset="UTF-8">
-    <script src="https://d3js.org/d3.v5.min.js"></script><!--D3: Data-Driven Documents-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="static/wc_accuracy/js/d3.min.js"></script><!--D3: Data-Driven Documents-->
+    <script src="static/wc_accuracy/js/jquery-3.3.1.min.js"></script>
+    <script src="static/wc_accuracy/js/codeGen.js"></script>
     <script src="static/wc_accuracy/jspsych-6.0.3/jspsych.js"></script>
     <script src="static/wc_accuracy/jspsych-6.0.3/plugins/jspsych-html-keyboard-response.js"></script>
     <script src="static/wc_accuracy/jspsych-6.0.3/plugins/wc_accuracy-image-sliders.js"></script>
-    <script src="static/wc_accuracy/jspsych-6.0.3/plugins/wc_accuracy-instruction.js"></script>
-    <script src="static/wc_accuracy/js/codeGen.js"></script>
-    <!--script src="static/common/js_experiments/json_test.json"></script>
-    <script src="static/common/js/lcnl-helpers.js"></script-->
+    <!--script src="static/common/js/lcnl-helpers.js"></script-->
     <link href="static/wc_accuracy/jspsych-6.0.3/css/jspsych.css" rel="stylesheet" type="text/css">
 </head>
 <body></body>
@@ -45,35 +43,37 @@
     /*  *** Instructions, you might want to change the wording *** */
     const instructions = {
         type: "html-keyboard-response",
-        stimulus: "<p>Your task will be rating how accurately a provided name describes an image.</p>" +
-            "<p>You will use a numeric scale from 1 to 7, with 1 being incredibly low accuracy, " +
-            "and 7 being exactly the word you would use to describe the image.</p>" +
-            "<p>Press any key to move to the instructional images.</p>"
+        stimulus: "<p>Your task will be rating how accurately a provided name describes a picture.</p>" +
+            "<p>You will use a numeric scale from 1 to 7, where 7 means the name is perfect for the picture,</p>" +
+            "and 1 is a completely misleading name.</p>" +
+            "<p>Press any key to advance.</p>"
     };
     timeline.push(instructions);
 
     /*  *** 3x demo screenshots *** */
     const instruction_1 = {
-        type: "instruction",  // customized plugin
-        prompt_above: "Instruction 1:",
-        image: img_dir + "fimg01.jpg",
-        prompt_below: "Press any key to continue."
+        type: "html-keyboard-response",
+        stimulus: "<p>Here is an example trial.</p>" +
+            "<p>You will see a picture and two possible words for describing that picture.</p>" +
+            "<p>Set the slider according to how accurate each name is for the picture.</p>" +
+            '<img src="'+ img_dir + 'ex7_1.PNG">' +
+            "<p>Press any key to continue.</p>"
     };
     timeline.push(instruction_1);
 
     const instruction_2 = {
-        type: "instruction",  // customized plugin
-        prompt_above: "Instruction 2:",
-        image: img_dir + "fimg02.jpg",
-        prompt_below: "Press any key to continue."
+        type: "html-keyboard-response",
+        stimulus: "<p>Some pictures will contain two very similar words.\n Feel free to provide specific ratings for each.</p>" +
+            '<img src="'+ img_dir + 'ex7_6.JPG">' +
+            "<p>Press any key to continue.</p>"
     };
     timeline.push(instruction_2);
 
     const instruction_3 = {
-        type: "instruction",  // customized plugin
-        prompt_above: "Instruction 3:",
-        image: img_dir + "fimg03.jpg",
-        prompt_below: "Press any key to begin the experiment."
+        type: "html-keyboard-response",
+        stimulus: "<p>If you feel both words are equally accurate, that's okay too.</p>" +
+            '<img src="'+ img_dir + 'ex6_6.JPG">' +
+            "<p>Press any key to begin the experiment.</p>"
     };
     timeline.push(instruction_3);
 
@@ -81,7 +81,7 @@
         type: "html-keyboard-response",
         stimulus: '<div style="font-size:60px;">+</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 1500,
+        trial_duration: 500,
         data: {test_part: 'fixation'}
     };
 
@@ -94,7 +94,6 @@
             stimulus: jsPsych.timelineVariable("stimulus"),
             labels: ['1', '2', '3', '4', '5', '6', '7'],
             prompt: "How good are these words for describing this picture?",
-            participant_index: id,
             word1: function() {
                 return jsPsych.timelineVariable("word1", true)
             },
@@ -130,10 +129,29 @@
             jsPsych.init({
                 timeline: timeline,
                 on_finish: function () {
-                    jsPsych.data.get().addToAll({subject_id: turk_info.workerID});
-                    jsPsych.data.displayData('JSON');
+                    const raw_data = jsPsych.data.get().filter({trial_type: 'image-2slider-2response'}).values();
+                    const data = [];
+                    raw_data.forEach(function(item, index) {
+                        data.push({
+                            participant: id,
+                            trial: index + 1,
+                            word_position: 1,
+                            word: item.word1,
+                            response: item.word1_response,
+                            rt: item.rt
+                        });
+                        data.push({
+                            participant: id,
+                            trial: index + 1,
+                            word_position: 2,
+                            word: item.word2,
+                            response: item.word2_response,
+                            rt: item.rt
+                        });
+                    });
+                    console.log(data);
                     //jsPsych.data.localSave(jsPsych.data.getData()[0]["subject"] + ".csv", 'csv');
-                    sendJSONData(jsPsych.data.getLastTimelineData().values(), "subject");
+                    sendJSONData(data, id);
                 }
             });
         });
