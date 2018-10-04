@@ -42,46 +42,40 @@
     };
     timeline.push(welcome);
 
-    /*  *** Instructions, you might want to change the wording *** */
+   /*  *** Instructions, you might want to change the wording *** */
     const instructions = {
         type: "html-keyboard-response",
-        stimulus: "<p>Your task will be rating how accurately a provided name describes an image.</p>" +
-            "<p>You will use a numeric scale from 1 to 7, with 1 being incredibly low accuracy, " +
-            "and 7 being exactly the word you would use to describe the image.</p>" +
-            "<p>Press any key to move to the instructional images.</p>"
+        stimulus: "<p>In this task you'll see a picture and two words.</br>You'll rate how well each word describes the picture. </br>Underneath each word will be a slider with a numerical scale. </br>You will rate each word on a range from 1-7, </br>with 7 being perfectly accurate, </br>1 completely misleading, </br>and 4 neither accurate nor misleading.</p>"
     };
     timeline.push(instructions);
 
     /*  *** 3x demo screenshots *** */
     const instruction_1 = {
         type: "instruction",  // customized plugin
-        prompt_above: "Instruction 1:",
-        image: img_dir + "fimg01.jpg",
+        prompt_above: "Here is a screenshot of how someone might have done this task. </br> They thought one word was slightly less accurate than the other. </p>",
+        image: img_dir + "ex7_6.JPG",
         prompt_below: "Press any key to continue."
     };
     timeline.push(instruction_1);
 
-    const instruction_2 = {
-        type: "instruction",  // customized plugin
-        prompt_above: "Instruction 2:",
-        image: img_dir + "fimg02.jpg",
-        prompt_below: "Press any key to continue."
-    };
-    timeline.push(instruction_2);
 
-    const instruction_3 = {
-        type: "instruction",  // customized plugin
-        prompt_above: "Instruction 3:",
-        image: img_dir + "fimg03.jpg",
-        prompt_below: "Press any key to begin the experiment."
-    };
-    timeline.push(instruction_3);
-
+	const instruction_2 = {
+            type: "image-2slider-2response",
+            stimulus: "static/wc_accuracy/img/obj000triangle.jpg",
+            labels: ['1', '2', '3', '4', '5', '6', '7'],
+            prompt: "Now try it yourself. Move the </br>slider under each word to rate it. </br>It is fine to rate them as equally </br>good or bad, or near each other.",
+            <!-- participant_index: 999, -->
+            word1: "shape",
+            word2: "triangle",
+            data: {test_part: jsPsych.timelineVariable("data")}
+        };
+		timeline.push(instruction_2);
+		
     const fixation = {
         type: "html-keyboard-response",
         stimulus: '<div style="font-size:60px;">+</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 1500,
+        trial_duration: 750,
         data: {test_part: 'fixation'}
     };
 
