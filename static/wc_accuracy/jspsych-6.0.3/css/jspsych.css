@@ -5,6 +5,7 @@
  * experiments look polished without any additional styles.
  */
 
+
  /* Container holding jsPsych content */
 
  .jspsych-display-element {
@@ -44,29 +45,32 @@
 
 .jspsych-display-element {
   font-family: 'Open Sans', 'Arial', sans-serif;
-  font-size: 18px;
+  font-size: 22px;
   line-height: 1.6em;
+  max.width:10%;
+
 }
 
 /* Form elements like input fields and buttons */
 
 .jspsych-display-element input[type="text"] {
   font-family: 'Open Sans', 'Arial', sans-serif;
-  font-size: 14px;
+  font-size: 22px;
 }
 
 /* borrowing Bootstrap style for btn elements, but combining styles a bit */
 .jspsych-btn {
   display: inline-block;
-  padding: 6px 12px;
+  padding: 25px 12px;
+  max.width:10%;
   margin: 0px;
-  font-size: 14px;
+  font-size: 22px;
   font-weight: 400;
   font-family: 'Open Sans', 'Arial', sans-serif;
   cursor: pointer;
   line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
+  text-align: left;
+  white-space: normal;
   vertical-align: middle;
   background-image: none;
   border: 1px solid transparent;
