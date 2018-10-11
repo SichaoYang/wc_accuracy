@@ -94,7 +94,7 @@ jsPsych.plugins['image-2slider-2response'] = (function () {
             slider_div += '<div>';
             for (let j = 0; j < trial.labels.length; j++) {
                 const width = 100 / (trial.labels.length - 1);
-                const left_offset = (j * (100 / (trial.labels.length - 1))) - (width / 2);
+                const left_offset = (j * (100 / (trial.labels.length - 1))) - (width / 2)+1.52;
                 slider_div += '<div style="display: inline-block; position: absolute; left:' + left_offset + '%; text-align: center; width: ' + width + '%;">';
                 slider_div += '<span style="text-align: center; font-size: 80%;">' + trial.labels[j] + '</span>';
                 slider_div += '</div>'
