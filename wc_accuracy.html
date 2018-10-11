@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html lang="en-US">
+<style>
+.textbody_bymark {
+  display: inline block;
+  text-align: center;
+  width: 45px;
+
+}
+</style>
 <head>
     <title>wc_accuracy</title>
     <meta charset="UTF-8">
@@ -22,8 +30,8 @@
     /** The directory containing the csv files providing {stimulus (image file name), word1, word2} */
     const csv_dir = "static/wc_accuracy/data/";
     /** The names of the csv files */
-    const csvs = [];
-    for (let i = 1; i <= 16; i++) csvs.push("data" + i.toString() + ".csv");
+    const csvs = ["wc_accuracy_stims_101018.csv"];
+    /** for (let i = 1; i <= 16; i++) csvs.push("data" + i.toString() + ".csv");
     /** The url of the counter api (temporarily on Sichao's server). */
     const counter_url = "http://123.207.148.121:12345/?cmd=increase";
 
@@ -38,50 +46,44 @@
     /*  *** Welcome screen ***  */
     const welcome = {
         type: "html-keyboard-response",
-        stimulus: "Thank you for your participation. Please press any key to continue."
+        stimulus: "<div style=  \"display: inline block; text-align: center; width: 500px;\">Thank you for your participation. Please press any key to continue.</div>"
     };
     timeline.push(welcome);
 
-    /*  *** Instructions, you might want to change the wording *** */
+   /*  *** Instructions, you might want to change the wording *** */
     const instructions = {
         type: "html-keyboard-response",
-        stimulus: "<p>Your task will be rating how accurately a provided name describes an image.</p>" +
-            "<p>You will use a numeric scale from 1 to 7, with 1 being incredibly low accuracy, " +
-            "and 7 being exactly the word you would use to describe the image.</p>" +
-            "<p>Press any key to move to the instructional images.</p>"
+        stimulus: "<div style= \"display: inline block; text-align: center; width: 500px;\"><p>In this task you'll see a picture and two names. You'll rate how well each name describes the picture. Underneath each name will be a slider with a numerical scale. You will rate each name on a range from 1-7, with 7 being perfectly accurate, 1 completely misleading, and 4 neither accurate nor misleading.</p></div>"
     };
     timeline.push(instructions);
 
     /*  *** 3x demo screenshots *** */
     const instruction_1 = {
         type: "instruction",  // customized plugin
-        prompt_above: "Instruction 1:",
-        image: img_dir + "fimg01.jpg",
-        prompt_below: "Press any key to continue."
+        prompt_above: "<p style= \" text-align: center; \">Here is a screenshot of how someone might have done this task. </p>",
+        image: img_dir + "ex7_6.JPG",
+        prompt_below: "They thought one name was slightly less accurate than the other. Press any key to continue."
     };
     timeline.push(instruction_1);
 
-    const instruction_2 = {
-        type: "instruction",  // customized plugin
-        prompt_above: "Instruction 2:",
-        image: img_dir + "fimg02.jpg",
-        prompt_below: "Press any key to continue."
-    };
-    timeline.push(instruction_2);
 
-    const instruction_3 = {
-        type: "instruction",  // customized plugin
-        prompt_above: "Instruction 3:",
-        image: img_dir + "fimg03.jpg",
-        prompt_below: "Press any key to begin the experiment."
-    };
-    timeline.push(instruction_3);
-
+	const instruction_2 = {
+            type: "image-2slider-2response",
+            stimulus: "static/wc_accuracy/img/obj000triangle.jpg",
+            labels: ['1', '2', '3', '4', '5', '6', '7'],
+            prompt: "<div style= \"display: inline block; text-align: left; width: 600px;\">Now try it yourself. Move the slider above each name to rate it. It is fine to rate them as equally good or bad, or near each other.</div>",
+            <!-- participant_index: 999, -->
+            word1: "shape",
+            word2: "triangle",
+            data: {test_part: jsPsych.timelineVariable("data")}
+        };
+		timeline.push(instruction_2);
+		
     const fixation = {
         type: "html-keyboard-response",
         stimulus: '<div style="font-size:60px;">+</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 1500,
+        trial_duration: 450,
         data: {test_part: 'fixation'}
     };
 
@@ -93,7 +95,7 @@
             type: "image-2slider-2response",
             stimulus: jsPsych.timelineVariable("stimulus"),
             labels: ['1', '2', '3', '4', '5', '6', '7'],
-            prompt: "How good are these words for describing this picture?",
+            prompt: "How accurate are these names for this picture?",
             participant_index: id,
             word1: function() {
                 return jsPsych.timelineVariable("word1", true)
@@ -106,14 +108,14 @@
 
         const thanks_page = {
             type: "html-keyboard-response",
-            stimulus: "<p>Thank you for your participation and your unique code is:</p>" +
+            stimulus: "<p>Thank you for your participation. Your unique code is:</p>" +
                     "<p style='font-size: 40px'>" + codeGen.genCode(id) + "</p>"
         };
 
         d3.csv(csv_dir + csvs[id % csvs.length], function (d) {
             return {
                 stimulus: img_dir + d.stimulus,
-                data: "fill",
+                data: "target",
                 word1: d.word1,
                 word2: d.word2
             };
@@ -130,10 +132,11 @@
             jsPsych.init({
                 timeline: timeline,
                 on_finish: function () {
-                    jsPsych.data.get().addToAll({subject_id: turk_info.workerID});
-                    jsPsych.data.displayData('JSON');
+                    //jsPsych.data.get().addToAll({subject_id:"1" }); // turk_info.workerID
+                    //jsPsych.data.displayData('JSON');
+					jsPsych.data.get().filter({trial_type: "image-2slider-2response"}).localSave('csv','mydata.csv');
                     //jsPsych.data.localSave(jsPsych.data.getData()[0]["subject"] + ".csv", 'csv');
-                    sendJSONData(jsPsych.data.getLastTimelineData().values(), "subject");
+                    //sendJSONData(jsPsych.data.getLastTimelineData().values(), "subject");
                 }
             });
         });
