@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html lang="en-US">
+<style>
+    .textbody_bymark {
+        display: inline-block;
+        text-align: center;
+        width: 45px;
+    }
+</style>
 <head>
     <title>wc_accuracy</title>
     <meta charset="UTF-8">
@@ -10,15 +17,20 @@
     <script src="/static/wc_accuracy/js/saver.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/jspsych.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/jspsych-html-keyboard-response.js"></script>
-    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc_accuracy-image-sliders.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-intro.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-trial.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-final.js"></script>
     <link href="/static/wc_accuracy/jspsych-6.0.3/css/jspsych.css" rel="stylesheet" type="text/css">
 </head>
 <body></body>
 
 <script language="JavaScript">
     /** Whether the experiment is running on the lab server */
-    const onLCNL = (location.hostname === "talk.psych.wisc.edu");
-    if (onLCNL) $.getScript( "/static/common/js/lcnl-helpers.js" );
+    const isLCNL = (location.hostname === "talk.psych.wisc.edu");
+    if (isLCNL) $.getScript("/static/common/js/lcnl-helpers.js");
+
+    /** Whether the server supports php */
+    const isPHP = false;
 
     /** The directory containing all images used in this experiment. */
     const img_dir = "/static/wc_accuracy/img/";
@@ -27,8 +39,9 @@
     const csv_dir = "/static/wc_accuracy/data/";
 
     /** The names of the csv files */
-    const csvs = [];  // add csv file names like ["data1.csv", "data2.csv"]
-    for (let i = 1; i <= 16; i++) csvs.push("data" + i.toString() + ".csv");
+    const csvs = ["test_101718.csv"];
+    // const csvs = [];  // add csv file names like ["data1.csv", "data2.csv"]
+    // for (let i = 1; i <= 16; i++) csvs.push("data" + i.toString() + ".csv");
 
     /* create timeline */
     const timeline = [];
@@ -36,101 +49,107 @@
     /*  *** Welcome screen ***  */
     const welcome = {
         type: "html-keyboard-response",
-        stimulus: "Thank you for your participation. Please press any key to continue."
+        stimulus: `<div style = "display: inline-block; text-align: center; width: 500px;">` +
+            `Thank you for your participation. Please press any key to continue.</div>`
     };
     timeline.push(welcome);
 
     /*  *** Instructions, you might want to change the wording *** */
     const instructions = {
         type: "html-keyboard-response",
-        stimulus: "<p>Your task will be rating how accurately a provided name describes a picture.</p>" +
-            "<p>You will use a numeric scale from 1 to 7, where 7 means the name is perfect for the picture,</p>" +
-            "and 1 is a completely misleading name.</p>" +
-            "<p>Press any key to advance.</p>"
+        stimulus: `<div style = "display: inline-block;text-align: center; width: 500px;">` +
+            `<p>In this task you'll see a picture and two names. ` +
+            `You'll rate how well each name describes the picture. ` +
+            `Underneath each name will be a slider with a numerical scale. ` +
+            `You will rate each name on a range from 1-7, with 7 being perfectly accurate, 1 completely misleading, ` +
+            `and 4 neither accurate nor misleading.</p></div>`
     };
     timeline.push(instructions);
 
-    /*  *** 3x demo screenshots *** */
     const instruction_1 = {
-        type: "html-keyboard-response",
-        stimulus: "<p>Here is an example trial.</p>" +
-            "<p>You will see a picture and two possible words for describing that picture.</p>" +
-            "<p>Set the slider according to how accurate each name is for the picture.</p>" +
-            '<img src="'+ img_dir + 'ex7_1.PNG">' +
-            "<p>Press any key to continue.</p>"
+        type: "wc-intro",  // customized plugin
+        prompt_above: `<p style = "text-align: center;">Here is a screenshot of how someone might have done this task. </p>`,
+        image: img_dir + "ex7_6.JPG",
+        prompt_below: `They thought one name was slightly less accurate than the other. Press any key to continue.`
     };
     timeline.push(instruction_1);
 
     const instruction_2 = {
-        type: "html-keyboard-response",
-        stimulus: "<p>Some pictures will contain two very similar words.\n Feel free to provide specific ratings for each.</p>" +
-            '<img src="'+ img_dir + 'ex7_6.JPG">' +
-            "<p>Press any key to continue.</p>"
+        type: "wc-trial",
+        stimulus: img_dir + "obj000triangle.jpg",
+        labels: ['1', '2', '3', '4', '5', '6', '7'],
+        prompt: `<div style = "display: inline-block; text-align: left; width: 600px;">` +
+            `Now try it yourself. Move the slider above each name to rate it. ` +
+            `It is fine to rate them as equally good or bad, or near each other.</div>`,
+        word1: "shape",
+        word2: "triangle",
+        dom_word: 2,
+        sec_is_foil: 0,
+        data: {test_part: jsPsych.timelineVariable("data")}
     };
     timeline.push(instruction_2);
 
-    const instruction_3 = {
-        type: "html-keyboard-response",
-        stimulus: "<p>If you feel both words are equally accurate, that's okay too.</p>" +
-            '<img src="'+ img_dir + 'ex6_6.JPG">' +
-            "<p>Press any key to begin the experiment.</p>"
-    };
-    timeline.push(instruction_3);
-
     const fixation = {
         type: "html-keyboard-response",
-        stimulus: '<div style="font-size:60px;">+</div>',
+        stimulus: '<div style = "font-size: 60px;">+</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 500,
+        trial_duration: 450,
         data: {test_part: 'fixation'}
     };
 
     // counter balancing: give different participants different sets of images corresponding to their index number
     const slider_trial = {
-        type: "image-2slider-2response",
+        type: "wc-trial",
         stimulus: jsPsych.timelineVariable("stimulus"),
         labels: ['1', '2', '3', '4', '5', '6', '7'],
-        prompt: "How good are these words for describing this picture?",
-        word1: function() {
+        prompt: "How accurate are these names for this picture?",
+        word1: function () {
             return jsPsych.timelineVariable("word1", true)
         },
-        word2: function() {
+        word2: function () {
             return jsPsych.timelineVariable("word2", true)
+        },
+        dom_word: function () {
+            return jsPsych.timelineVariable("dom_word", true)
+        },
+        sec_is_foil: function () {
+            return jsPsych.timelineVariable("sec_is_foil", true)
         },
         data: {test_part: jsPsych.timelineVariable("data")}
     };
 
     /* Place later steps in the callback function, or they will not wait for the former steps.
     Instead, they will be executed right away asynchronously */
-    counter.count(function(id){  // get the index number of this participant from a server script
+    counter.count(function (id) {  // get the index number of this participant from a server script
         const thanks_page = {
-            type: "html-keyboard-response",
-            stimulus: "<p>Thank you for your participation and your unique code is:</p>" +
-                    "<p style='font-size: 40px'>" + codeGen.genCode(id) + "</p>"
+            type: "wc-final",
+            participant: id,
+            stimulus: `<p>Thank you for your participation. Your unique code is:</p>` +
+                `<p style = 'font-size: 40px'>${codeGen.genCode(id)}</p>`
         };
 
         d3.csv(csv_dir + csvs[id % csvs.length], function (d) {
             return {
                 stimulus: img_dir + d.stimulus,
-                data: "fill",
+                data: "target",
                 word1: d.word1,
-                word2: d.word2
+                word2: d.word2,
+                dom_word: d.dom_word,
+                sec_is_foil: d.sec_is_foil == 1
             };
         }).then(function (test_stimuli) {
             const test_procedure = {
                 /* *** Flow of the experiment: If you wanted to, say, add a fixation between word1 and word2,
                 it would look like "timeline:[fixation,word1,fixation,word2], etc."*** */
                 timeline: [fixation, slider_trial],
-                timeline_variables: test_stimuli,
+                timeline_variables: test_stimuli.slice(0, 3),
                 randomize_order: false
             };
             timeline.push(test_procedure);
             timeline.push(thanks_page);
             jsPsych.init({
                 timeline: timeline,
-                on_finish: function () {
-                    saver.save(jsPsych.data.get().filter({trial_type: 'image-2slider-2response'}).values(), id);
-                }
+                on_finish: function () {}
             });
         });
     });
