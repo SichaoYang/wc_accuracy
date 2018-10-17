@@ -35,8 +35,8 @@ const counter = (function () {
         },
         /** count by time */
         count_rnd: function(callback) {
-            time = (new Date()).getTime();  // milliseconds passed since midnight on January 1st, 1970.
-            callback(time % 1e10);  // unique in roughly a month
+            const time = (new Date()).getTime();  // milliseconds passed since midnight on January 1st, 1970.
+            callback(time);  // unique in roughly a month
         }
     }
 })();
