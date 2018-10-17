@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>wc_accuracy</title>
+    <meta charset="UTF-8">
+    <script src="/static/wc_accuracy/js/d3.min.js"></script><!--D3: Data-Driven Documents-->
+    <script src="/static/wc_accuracy/js/jquery-3.3.1.min.js"></script>
+    <script src="/static/wc_accuracy/js/codeGen.js"></script>
+    <script src="/static/wc_accuracy/js/counter.js"></script>
+    <script src="/static/wc_accuracy/js/saver.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/jspsych.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc_accuracy-image-sliders.js"></script>
+    <link href="/static/wc_accuracy/jspsych-6.0.3/css/jspsych.css" rel="stylesheet" type="text/css">
+</head>
+<body></body>
+
+<script language="JavaScript">
+    /** Whether the experiment is running on the lab server */
+    const onLCNL = (location.hostname === "talk.psych.wisc.edu");
+    if (onLCNL) $.getScript( "/static/common/js/lcnl-helpers.js" );
+
+    /** The directory containing all images used in this experiment. */
+    const img_dir = "/static/wc_accuracy/img/";
+
+    /** The directory containing the csv files providing {stimulus (image file name), word1, word2} */
+    const csv_dir = "/static/wc_accuracy/data/";
+
+    /** The names of the csv files */
+    const csvs = [];  // add csv file names like ["data1.csv", "data2.csv"]
+    for (let i = 1; i <= 16; i++) csvs.push("data" + i.toString() + ".csv");
+
+    /* create timeline */
+    const timeline = [];
+
+    /*  *** Welcome screen ***  */
+    const welcome = {
+        type: "html-keyboard-response",
+        stimulus: "Thank you for your participation. Please press any key to continue."
+    };
+    timeline.push(welcome);
+
+    /*  *** Instructions, you might want to change the wording *** */
+    const instructions = {
+        type: "html-keyboard-response",
+        stimulus: "<p>Your task will be rating how accurately a provided name describes a picture.</p>" +
+            "<p>You will use a numeric scale from 1 to 7, where 7 means the name is perfect for the picture,</p>" +
+            "and 1 is a completely misleading name.</p>" +
+            "<p>Press any key to advance.</p>"
+    };
+    timeline.push(instructions);
+
+    /*  *** 3x demo screenshots *** */
+    const instruction_1 = {
+        type: "html-keyboard-response",
+        stimulus: "<p>Here is an example trial.</p>" +
+            "<p>You will see a picture and two possible words for describing that picture.</p>" +
+            "<p>Set the slider according to how accurate each name is for the picture.</p>" +
+            '<img src="'+ img_dir + 'ex7_1.PNG">' +
+            "<p>Press any key to continue.</p>"
+    };
+    timeline.push(instruction_1);
+
+    const instruction_2 = {
+        type: "html-keyboard-response",
+        stimulus: "<p>Some pictures will contain two very similar words.\n Feel free to provide specific ratings for each.</p>" +
+            '<img src="'+ img_dir + 'ex7_6.JPG">' +
+            "<p>Press any key to continue.</p>"
+    };
+    timeline.push(instruction_2);
+
+    const instruction_3 = {
+        type: "html-keyboard-response",
+        stimulus: "<p>If you feel both words are equally accurate, that's okay too.</p>" +
+            '<img src="'+ img_dir + 'ex6_6.JPG">' +
+            "<p>Press any key to begin the experiment.</p>"
+    };
+    timeline.push(instruction_3);
+
+    const fixation = {
+        type: "html-keyboard-response",
+        stimulus: '<div style="font-size:60px;">+</div>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 500,
+        data: {test_part: 'fixation'}
+    };
+
+    // counter balancing: give different participants different sets of images corresponding to their index number
+    const slider_trial = {
+        type: "image-2slider-2response",
+        stimulus: jsPsych.timelineVariable("stimulus"),
+        labels: ['1', '2', '3', '4', '5', '6', '7'],
+        prompt: "How good are these words for describing this picture?",
+        word1: function() {
+            return jsPsych.timelineVariable("word1", true)
+        },
+        word2: function() {
+            return jsPsych.timelineVariable("word2", true)
+        },
+        data: {test_part: jsPsych.timelineVariable("data")}
+    };
+
+    /* Place later steps in the callback function, or they will not wait for the former steps.
+    Instead, they will be executed right away asynchronously */
+    counter.count(function(id){  // get the index number of this participant from a server script
+        const thanks_page = {
+            type: "html-keyboard-response",
+            stimulus: "<p>Thank you for your participation and your unique code is:</p>" +
+                    "<p style='font-size: 40px'>" + codeGen.genCode(id) + "</p>"
+        };
+
+        d3.csv(csv_dir + csvs[id % csvs.length], function (d) {
+            return {
+                stimulus: img_dir + d.stimulus,
+                data: "fill",
+                word1: d.word1,
+                word2: d.word2
+            };
+        }).then(function (test_stimuli) {
+            const test_procedure = {
+                /* *** Flow of the experiment: If you wanted to, say, add a fixation between word1 and word2,
+                it would look like "timeline:[fixation,word1,fixation,word2], etc."*** */
+                timeline: [fixation, slider_trial],
+                timeline_variables: test_stimuli,
+                randomize_order: false
+            };
+            timeline.push(test_procedure);
+            timeline.push(thanks_page);
+            jsPsych.init({
+                timeline: timeline,
+                on_finish: function () {
+                    saver.save(jsPsych.data.get().filter({trial_type: 'image-2slider-2response'}).values(), id);
+                }
+            });
+        });
+    });
+</script>
+</html>
