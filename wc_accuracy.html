@@ -17,6 +17,7 @@
     <script src="/static/wc_accuracy/js/saver.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/jspsych.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-consent.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-intro.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-trial.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-final.js"></script>
@@ -51,6 +52,16 @@
     /* create timeline */
     const timeline = [];
 
+    /*  *** Informed Consent ***  */
+    const consent = {
+        type: "wc-consent",
+        info: `<div style = "display: inline-block; text-align: left; width: 900px;">` +
+            `<p>The HIT you are about to do is sponsored by the Univeristy of Wisonsin-Madison.  You will hear or read sentences or words or view pictures or words on the computer screen.  You will be asked to do one or more of the following:  read aloud, recall sentences, words, or pictures that you have heard or seen during the experiment, complete phrases to make sentences, make up new sentences and say them aloud or write them down, rate the plausibility or other features of the words, sentences or pictures, describe pictures using speech,writing, or gestures, answer questions about speech you have heard, click on pictures on the screen or touch pictures on a touch screen or to press keys on the keyboard in response to the words, sentences or pictures.  HIT instructions will be provided on the next screen.</p>` +
+            `<p>This task has no anticipated risks nor direct benefits.  If you have any questions or concerns about this HIT please contact the principal investigator: Dr. Maryellen MacDonald at mcmacdonald@wisc.edu.  If you are not satisfied with the response of the research team, have more questions, or want to talk with someone about your rights as a research participant, you should contact University of Wisconsin's Education Research and Social & Behavioral Science IRB Office at 608-263-2320.  You are free to decline to participate, to end participation at any time for any reason.</p>` +
+            `</div>`
+    };
+    timeline.push(consent);
+
     /*  *** Welcome screen ***  */
     const welcome = {
         type: "html-keyboard-response",
@@ -74,14 +85,14 @@
     const instruction_1 = {
         type: "wc-intro",  // customized plugin
         prompt_above: `<p style = "text-align: center;">Here is a screenshot of how someone might have done this task. </p>`,
-        image: img_dir + "ex7_6.JPG",
+        image: "ex7_6.JPG",
         prompt_below: `They thought one name was slightly less accurate than the other. Press any key to continue.`
     };
     timeline.push(instruction_1);
 
     const instruction_2 = {
         type: "wc-trial",
-        stimulus: img_dir + "obj000triangle.jpg",
+        stimulus: "obj000triangle.jpg",
         labels: ['1', '2', '3', '4', '5', '6', '7'],
         prompt: `<div style = "display: inline-block; text-align: left; width: 600px;">` +
             `Now try it yourself. Move the slider above each name to rate it. ` +
@@ -135,7 +146,7 @@
 
         d3.csv(csv_dir + csvs[id % csvs.length], function (d) {
             return {
-                stimulus: img_dir + d.stimulus,
+                stimulus: d.stimulus,
                 data: "target",
                 word1: d.word1,
                 word2: d.word2,

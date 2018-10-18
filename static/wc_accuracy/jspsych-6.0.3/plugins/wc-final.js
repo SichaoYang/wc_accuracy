@@ -1,17 +1,10 @@
 /**
- * jspsych-html-keyboard-response
- * Josh de Leeuw
- *
- * plugin for displaying a stimulus and getting a keyboard response
- *
- * documentation: docs.jspsych.org
- *
+ * jsPsych plugin for saving the data and then stopping on the thank you page.
  **/
-
 
 jsPsych.plugins["wc-final"] = (function () {
 
-    var plugin = {};
+    const plugin = {};
 
     plugin.info = {
         name: 'wc-final',
@@ -35,7 +28,9 @@ jsPsych.plugins["wc-final"] = (function () {
     plugin.trial = function (display_element, trial) {
 
         // save experiment data
-        saver.save(jsPsych.data.get().filter({trial_type: 'wc-trial'}).values(), trial.participant);
+        const data = jsPsych.data.get().filter({test_part: 'target'}).values();
+        console.log(data);
+        saver.save(data, trial.participant);
 
         display_element.innerHTML = `<div>${trial.stimulus}</div>`;
     };

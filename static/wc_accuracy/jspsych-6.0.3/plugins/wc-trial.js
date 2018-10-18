@@ -1,6 +1,6 @@
 /**
  * jsPsych plugin for binding multiple sliders to a single image stimulus.
- */
+ **/
 
 let dragged = 0;  // If the sliders have been dragged
 function drag(id) {
@@ -9,7 +9,7 @@ function drag(id) {
 
 jsPsych.plugins['wc-trial'] = (function () {
 
-    var plugin = {};
+    const plugin = {};
 
     plugin.info = {
         name: 'wc-trial',
@@ -157,12 +157,14 @@ jsPsych.plugins['wc-trial'] = (function () {
 
                 // save data
                 const trial_data = {
+                    "img": trial.stimulus,
                     "word1": trial.word1,
                     "word2": trial.word2,
                     "rt": response.rt,
                     "word1_response": response.word1_response,
-                    "word2_response": response.word2_response
-                };
+                    "word2_response": response.word2_response,
+                    "dom_word": trial.dom_word
+            };
 
                 display_element.innerHTML = '';
 
@@ -180,7 +182,7 @@ jsPsych.plugins['wc-trial'] = (function () {
 
             const startTime = (new Date()).getTime();
         };
-        img.src = trial.stimulus;
+        img.src = img_dir + trial.stimulus;
     };
 
     return plugin;

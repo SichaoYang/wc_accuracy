@@ -11,21 +11,30 @@ const saver = (function () {
         save: function(raw_data, participant) {
             const json = [];
             raw_data.forEach(function(item, index) {
+                const dominant = item.dom_word == 1 ? item.word1 : item.word2;
                 json.push({
+                    img: item.img,
                     participant: participant,
                     trial: index + 1,
                     word_position: 1,
                     word: item.word1,
+                    dominant: dominant,
+                    is_dominant: item.dom_word == 1 ? 1 : 0,
                     response: item.word1_response,
-                    rt: item.rt
+                    rt: item.rt,
+                    time_elapsed: item.time_elapsed
                 });
                 json.push({
+                    img: item.img,
                     participant: participant,
                     trial: index + 1,
                     word_position: 2,
                     word: item.word2,
+                    dominant: dominant,
+                    is_dominant: item.dom_word == 2 ? 1 : 0,
                     response: item.word2_response,
-                    rt: item.rt
+                    rt: item.rt,
+                    time_elapsed: item.time_elapsed
                 });
             });
             if (isLCNL)     sendJSONData(json, participant);  // /static/common/js/lcnl-helpers.js

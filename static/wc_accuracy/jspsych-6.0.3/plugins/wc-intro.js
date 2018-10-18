@@ -1,10 +1,10 @@
-/*
+/**
  * jsPsych plugin for showing instructions combining text and image.
- */
+ **/
 
 jsPsych.plugins["wc-intro"] = (function() {
 
-    var plugin = {};
+    const plugin = {};
 
     plugin.info = {
         name: 'wc-intro',
@@ -86,7 +86,7 @@ jsPsych.plugins["wc-intro"] = (function() {
                 }, trial.trial_duration);
             }
         };
-        img.src = trial.image;
+        img.src = img_dir + trial.image;
     };
 
     return plugin;
