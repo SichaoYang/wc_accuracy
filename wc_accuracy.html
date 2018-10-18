@@ -22,9 +22,14 @@
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-final.js"></script>
     <link href="/static/wc_accuracy/jspsych-6.0.3/css/jspsych.css" rel="stylesheet" type="text/css">
 </head>
-<body></body>
+<body onload="zoom()" onresize="zoom()"></body>
 
 <script language="JavaScript">
+    function zoom() {
+        const bestHeight = 900;
+        document.body.style.zoom = window.innerHeight / bestHeight;
+    }
+
     /** Whether the experiment is running on the lab server */
     const isLCNL = (location.hostname === "talk.psych.wisc.edu");
     if (isLCNL) $.getScript("/static/common/js/lcnl-helpers.js");
@@ -148,8 +153,7 @@
             timeline.push(test_procedure);
             timeline.push(thanks_page);
             jsPsych.init({
-                timeline: timeline,
-                on_finish: function () {}
+                timeline: timeline
             });
         });
     });
