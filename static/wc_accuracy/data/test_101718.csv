@@ -1,4 +1,0 @@
-stimulus,word1,word2,dominant,secondary,shared_word,dom_word,sec_is_artificial,sec_is_foil,target,prop,sec_prop,norm_type,trial,rand
-obj026banana.jpg,carrot,banana,banana,NA,,2,1,1,banana,1,NA,wc,67,6b
-obj030barrel.jpg,barrel,woodenbucket,barrel,woodenbucket,,1,0,0,barrel,0.945945946,0.027027027,wc,3,0b
-obj040bell.jpg,bell,pan,bell,NA,,1,1,1,bell,1,NA,wc,1,0b
