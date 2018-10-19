@@ -48,7 +48,7 @@
     const csv_dir = "/static/wc_accuracy/data/";
 
     /** The names of the csv files */
-    const csvs = ["test_101718.csv"];
+    const csvs = ["wc_acc_pilot2_1.csv", "wc_acc_pilot2_2.csv"];
     // const csvs = [];  // add csv file names like ["data1.csv", "data2.csv"]
     // for (let i = 1; i <= 16; i++) csvs.push("data" + i.toString() + ".csv");
 
@@ -81,7 +81,7 @@
             `You'll rate how well each name describes the picture. ` +
             `Underneath each name will be a slider with a numerical scale. ` +
             `You will rate each name on a range from 1-7. Seven (7) ` +
-            `means the name is perfectly accurate for the picture. One (1)` +
+            `means the name is perfectly accurate for the picture. One (1) ` +
             `means it is misleading. You should use the numbers in between ` +
             `for names that are some of both.</p></div>`
     };
@@ -162,7 +162,7 @@
                 /* *** Flow of the experiment: If you wanted to, say, add a fixation between word1 and word2,
                 it would look like "timeline:[fixation,word1,fixation,word2], etc."*** */
                 timeline: [fixation, slider_trial],
-                timeline_variables: test_stimuli.slice(0, 3),
+                timeline_variables: test_stimuli, // .slice(0, 3),
                 randomize_order: false
             };
             timeline.push(test_procedure);
