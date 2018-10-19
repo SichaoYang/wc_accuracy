@@ -31,8 +31,11 @@
         document.body.style.zoom = window.innerHeight / bestHeight;
     }
 
+    /** Whether the experiment is running inside Mechanical Turk */
+    const isTurk = !jsPsych.turk.turkInfo().outsideTurk;
+
     /** Whether the experiment is running on the lab server */
-    const isLCNL = (location.hostname === "talk.psych.wisc.edu");
+    const isLCNL = isTurk || (location.hostname === "talk.psych.wisc.edu");
     if (isLCNL) $.getScript("/static/common/js/lcnl-helpers.js");
 
     /** Whether the server supports php */
@@ -139,9 +142,7 @@
     counter.count(function (id) {  // get the index number of this participant from a server script
         const thanks_page = {
             type: "wc-final",
-            participant: id,
-            stimulus: `<p>Thank you for your participation. Your unique code is:</p>` +
-                `<p style = 'font-size: 40px'>${codeGen.genCode(id)}</p>`
+            participant: id
         };
 
         d3.csv(csv_dir + csvs[id % csvs.length], function (d) {

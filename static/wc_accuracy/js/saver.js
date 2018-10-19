@@ -8,13 +8,14 @@ const saver = (function () {
          * @param json - the json object to be saved
          * @param participant - the index of the participant producing the data
          */
-        save: function(raw_data, participant) {
+        save: function(raw_data, participant, code) {
             const json = [];
             raw_data.forEach(function(item, index) {
                 const dominant = item.dom_word == 1 ? item.word1 : item.word2;
                 json.push({
                     img: item.img,
                     participant: participant,
+                    code: code,
                     trial: index + 1,
                     word_position: 1,
                     word: item.word1,
@@ -27,6 +28,7 @@ const saver = (function () {
                 json.push({
                     img: item.img,
                     participant: participant,
+                    code: code,
                     trial: index + 1,
                     word_position: 2,
                     word: item.word2,
