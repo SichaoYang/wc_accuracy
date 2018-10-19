@@ -3,7 +3,9 @@
  */
 const codeGen = (function () {
     return {
-        /** generates a unique code according to the participant id */
+        /** generates a unique code according to the participant id
+         * @param id - the participant index
+         */
         genCode: function(id) {
             //create random code for final message
             //start code creation script
@@ -14,7 +16,7 @@ const codeGen = (function () {
                 return rand_letter;
             };
 
-            const secretCode = "CrossPC"; // this is the 'key'
+            const secretCode = "wc15a"; // this is the 'key'
             let code = "";
 
             for (let i = 0; i < 7; i++){
