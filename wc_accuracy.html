@@ -70,15 +70,17 @@
     };
     timeline.push(welcome);
 
-    /*  *** Instructions, you might want to change the wording *** */
+    /*  *** Instructions *** */
     const instructions = {
         type: "html-keyboard-response",
         stimulus: `<div style = "display: inline-block;text-align: center; width: 500px;">` +
             `<p>In this task you'll see a picture and two names. ` +
             `You'll rate how well each name describes the picture. ` +
             `Underneath each name will be a slider with a numerical scale. ` +
-            `You will rate each name on a range from 1-7, with 7 being perfectly accurate, 1 completely misleading, ` +
-            `and 4 neither accurate nor misleading.</p></div>`
+            `You will rate each name on a range from 1-7. Seven (7) ` +
+            `means the name is perfectly accurate for the picture. One (1)` +
+            `means it is misleading. You should use the numbers in between ` +
+            `for names that are some of both.</p></div>`
     };
     timeline.push(instructions);
 
@@ -95,8 +97,9 @@
         stimulus: "obj000triangle.jpg",
         labels: ['1', '2', '3', '4', '5', '6', '7'],
         prompt: `<div style = "display: inline-block; text-align: left; width: 600px;">` +
-            `Now try it yourself. Move the slider above each name to rate it. ` +
-            `It is fine to rate them as equally good or bad, or near each other.</div>`,
+            `Now try it yourself. Move the slider above each name to rate it.` +
+            `You can also click directly on the line to place the slider.` +
+            `It is fine to have the slider in the same position for both names.</div>`,
         word1: "shape",
         word2: "triangle",
         dom_word: 2,
