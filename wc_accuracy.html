@@ -1,12 +1,5 @@
 <!DOCTYPE html>
 <html lang="en-US">
-<style>
-    .textbody_bymark {
-        display: inline-block;
-        text-align: center;
-        width: 45px;
-    }
-</style>
 <head>
     <title>wc_accuracy</title>
     <meta charset="UTF-8">
@@ -18,8 +11,10 @@
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-consent.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-intro.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-trial.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-survey.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-final.js"></script>
     <link href="/static/wc_accuracy/jspsych-6.0.3/css/jspsych.css" rel="stylesheet" type="text/css">
+    <link href="/static/wc_accuracy/css/wc.css" rel="stylesheet" type="text/css">
 </head>
 <body onload="zoom()" onresize="zoom()"></body>
 
@@ -52,6 +47,8 @@
     /* create timeline */
     const timeline = [];
 
+
+
     /*  *** Informed Consent ***  */
     const consent = {
         type: "wc-consent",
@@ -60,7 +57,6 @@
             `<p>This task has no anticipated risks nor direct benefits.  If you have any questions or concerns about this HIT please contact the principal investigator: Dr. Maryellen MacDonald at mcmacdonald@wisc.edu.  If you are not satisfied with the response of the research team, have more questions, or want to talk with someone about your rights as a research participant, you should contact University of Wisconsin's Education Research and Social & Behavioral Science IRB Office at 608-263-2320.  You are free to decline to participate, to end participation at any time for any reason.</p>` +
             `</div>`
     };
-    timeline.push(consent);
 
     /*  *** Welcome screen ***  */
     const welcome = {
@@ -68,10 +64,9 @@
         stimulus: `<div style = "display: inline-block; text-align: center; width: 500px;">` +
             `Thank you for your participation. Please press any key to continue.</div>`
     };
-    timeline.push(welcome);
 
-    /*  *** Instructions *** */
-    const instructions = {
+    /*  *** Instruction *** */
+    const instruction1 = {
         type: "html-keyboard-response",
         stimulus: `<div style = "display: inline-block;text-align: center; width: 500px;">` +
             `<p>In this task you'll see a picture and two names. ` +
@@ -82,17 +77,15 @@
             `means it is misleading. You should use the numbers in between ` +
             `for names that are some of both.</p></div>`
     };
-    timeline.push(instructions);
 
-    const instruction_1 = {
+    const instruction2 = {
         type: "wc-intro",  // customized plugin
         prompt_above: `<p style = "text-align: center;">Here is a screenshot of how someone might have done this task. </p>`,
         image: "ex7_6.JPG",
         prompt_below: `They thought one name was slightly less accurate than the other. Press any key to continue.`
     };
-    timeline.push(instruction_1);
 
-    const instruction_2 = {
+    const instruction3 = {
         type: "wc-trial",
         stimulus: "obj000triangle.jpg",
         labels: ['1', '2', '3', '4', '5', '6', '7'],
@@ -106,7 +99,6 @@
         sec_is_foil: 0,
         data: {test_part: jsPsych.timelineVariable("data")}
     };
-    timeline.push(instruction_2);
 
     const fixation = {
         type: "html-keyboard-response",
@@ -144,6 +136,9 @@
     Instead, they will be executed right away asynchronously */
     wc.participant().id(function (participant) {
         id = participant;
+        const survey = {
+            type: "wc-survey"
+        };
         const thanks_page = {
             type: "wc-final"
         };
@@ -161,10 +156,12 @@
                 /* *** Flow of the experiment: If you wanted to, say, add a fixation between word1 and word2,
                 it would look like "timeline:[fixation,word1,fixation,word2], etc."*** */
                 timeline: [fixation, slider_trial],
-                timeline_variables: test_stimuli, // .slice(0, 3),
+                timeline_variables: test_stimuli, //.slice(0, 1),
                 randomize_order: false
             };
+            timeline.push(consent, welcome, instruction1, instruction2, instruction3);
             timeline.push(test_procedure);
+            timeline.push(survey);
             timeline.push(thanks_page);
             jsPsych.init({
                 timeline: timeline

@@ -19,8 +19,12 @@ jsPsych.plugins["wc-final"] = (function () {
 
         wc.data().save(data);
 
-        display_element.innerHTML = `<div><p>Thank you for your participation. Your unique code is:</p>` +
-            `<p style = 'font-size:40px'>${code}</p></div>`;
+        const div = document.createElement("div");
+        div.innerHTML = `<div><p>Thank you for your participation.`;
+        if (isTurk) div.innerHTML += ` Your unique code is:</p>\`<p style = 'font-size:40px'>${code}`;
+        div.innerHTML += `</p></div>`;
+
+        display_element.appendChild(div);
     };
 
     return plugin;

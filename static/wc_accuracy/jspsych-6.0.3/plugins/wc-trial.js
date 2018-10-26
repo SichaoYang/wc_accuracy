@@ -97,18 +97,18 @@ jsPsych.plugins['wc-trial'] = (function () {
 
     plugin.trial = function (display_element, trial) {
         function slider_div(id) {
-            let slider_div = `<div class="jspsych-image-slider-response-container" style="position:relative;">`;
-            slider_div += `<input type="range" value="${trial.start}" min="${trial.min}" max="${trial.max}" ` +
-                `step="${trial.step}" style="width: 100%;" id="wc_accuracy-slider${id}" onmouseup="drag(${id})"><div>`;
+            let slider_div = `<div class="jspsych-image-slider-response-container" style="position:relative;">
+                <input type="range" value="${trial.start}" min="${trial.min}" max="${trial.max}"
+                step="${trial.step}" style="width: 100%;" id="wc_accuracy-slider${id}" onmouseup="drag(${id})">
+                <div>`;
             for (let j = 0; j < trial.labels.length; j++) {
                 const width = 100 / (trial.labels.length - 1);
                 const left_offset = (j * (100 / (trial.labels.length - 1))) - (width / 2)+1.52;
-                slider_div += `<div style="display: inline-block; position: absolute; left:${left_offset}%;` +
-                    `text-align: center; width: ${width}%;">`;
-                slider_div += `<span style="text-align: center; font-size: 80%;">${trial.labels[j]}</span>`;
-                slider_div += '</div>'
+                slider_div += `<div style="display: inline-block; position: absolute; left: ${left_offset}%; text-align: center; width: ${width}%;">
+                    <span style="text-align: center; font-size: 80%;">${trial.labels[j]}</span>
+                </div>`;
             }
-            slider_div += '</div></div></div>';
+            slider_div += '</div></div>';
 
             return slider_div;
         }
@@ -118,13 +118,10 @@ jsPsych.plugins['wc-trial'] = (function () {
         const img = new Image();
         img.onload = function () {
             div.appendChild(img);
-            let html = `<p>${trial.prompt}</p>`;
-            html += slider_div("1");
-            html += `<p><strong>${trial.word1}</strong></p>`;
-            html += slider_div("2");
-            html += `<p><strong>${trial.word2}</strong></p>`;
-            html += `<button id="wc_accuracy-next" class="jspsych-btn" style="visibility:visible">${trial.button_label}</button>`;  // submit
-            div.innerHTML += html;
+            div.innerHTML += `<p>${trial.prompt}</p>
+            ${slider_div("1")}<p><strong>${trial.word1}</strong></p>
+            ${slider_div("2")}<p><strong>${trial.word2}</strong></p>
+            <button id="wc_accuracy-next" class="jspsych-btn" style="visibility:hidden">${trial.button_label}</button>`;
             display_element.appendChild(div);
 
             const response = {
@@ -139,10 +136,10 @@ jsPsych.plugins['wc-trial'] = (function () {
                 response.word1_response = display_element.querySelector('#wc_accuracy-slider1').value;
                 response.word2_response = display_element.querySelector('#wc_accuracy-slider2').value;
                 if (trial.sec_is_foil) {
-                    if (trial.dom_word === 1 && response.word2_response > 15) {
+                    if (trial.dom_word !== 2 && response.word2_response > 15) {
                         alert("Are you sure about that? One of your ratings does not seem accurate.");
                         return;
-                    } else if (trial.dom_word === 2 && response.word1_response > 15) {
+                    } else if (trial.dom_word !== 1 && response.word1_response > 15) {
                         alert("Are you sure about that? One of your ratings does not seem accurate.");
                         return;
                     }

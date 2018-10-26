@@ -62,8 +62,9 @@ const wc = (function () {
 
             /** Return the current time as id */
             function id_rnd(callback) {
-                const time = (new Date()).getTime();  // milliseconds passed since midnight on January 1st, 1970.
-                callback(time);  // unique in roughly a month
+                // const time = (new Date()).getTime();  // milliseconds passed since midnight on January 1st, 1970.
+                // callback(time);  // unique in roughly a month
+                callback("");
             }
 
             return {
@@ -82,34 +83,46 @@ const wc = (function () {
                 const date = new Date().toString();
                 raw_data.forEach(function(item, index) {
                     json.push({
-                        participant: id,
+                        workerID: id,
                         code: code,
                         completion_time: date,
                         cbal: cbal,
                         trial: index + 1,
                         img: item.img,
+                        word_position: 1,
                         word: item.word1,
                         dominant: item.dominant,
-                        word_position: 1,
                         is_dominant: item.dom_word === 1 ? 1 : 0,
                         response: item.word1_response,
                         rt: item.rt,
-                        time_elapsed: item.time_elapsed
+                        time_elapsed: item.time_elapsed,
+                        age: item.age,
+                        gender: item.gender,
+                        gender_other: item.gender_other,
+                        inUS: item.inUS,
+                        city: item.city,
+                        state: item.state
                     });
                     json.push({
-                        participant: id,
+                        workerID: id,
                         code: code,
                         completion_time: date,
                         cbal: cbal,
                         trial: index + 1,
                         img: item.img,
+                        word_position: 2,
                         word: item.word2,
                         dominant: item.dominant,
-                        word_position: 2,
                         is_dominant: item.dom_word === 2 ? 1 : 0,
                         response: item.word2_response,
                         rt: item.rt,
-                        time_elapsed: item.time_elapsed
+                        time_elapsed: item.time_elapsed,
+                        age: item.age,
+                        gender: item.gender,
+                        gender_other: item.gender_other,
+                        inUS: item.inUS,
+                        city: item.city,
+                        state: item.state
                     });
                 });
                 return json;
