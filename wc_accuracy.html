@@ -12,9 +12,7 @@
     <meta charset="UTF-8">
     <script src="/static/wc_accuracy/js/d3.min.js"></script><!--D3: Data-Driven Documents-->
     <script src="/static/wc_accuracy/js/jquery-3.3.1.min.js"></script>
-    <script src="/static/wc_accuracy/js/codeGen.js"></script>
-    <script src="/static/wc_accuracy/js/counter.js"></script>
-    <script src="/static/wc_accuracy/js/saver.js"></script>
+    <script src="/static/wc_accuracy/js/wc.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/jspsych.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/jspsych-html-keyboard-response.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-consent.js"></script>
@@ -48,9 +46,8 @@
     const csv_dir = "/static/wc_accuracy/data/";
 
     /** The names of the csv files */
-    const csvs = ["wc_acc_pilot2_1.csv", "wc_acc_pilot2_2.csv"];
-    // const csvs = [];  // add csv file names like ["data1.csv", "data2.csv"]
-    // for (let i = 1; i <= 16; i++) csvs.push("data" + i.toString() + ".csv");
+    const csvs = [];  // add csv file names like ["data1.csv", "data2.csv"]
+    for (let i = 1; i <= 16; i++) csvs.push(`cbal.acc.${i < 10 ? "0" : ""}${i.toString()}.csv`);
 
     /* create timeline */
     const timeline = [];
@@ -140,22 +137,24 @@
         data: {test_part: jsPsych.timelineVariable("data")}
     };
 
+    let id;
+    const code = wc.gen_code();
+    const cbal = wc.gen_rndn(csvs.length);
     /* Place later steps in the callback function, or they will not wait for the former steps.
     Instead, they will be executed right away asynchronously */
-    counter.count(function (id) {  // get the index number of this participant from a server script
+    wc.participant().id(function (participant) {
+        id = participant;
         const thanks_page = {
-            type: "wc-final",
-            participant: id
+            type: "wc-final"
         };
-
-        d3.csv(csv_dir + csvs[id % csvs.length], function (d) {
+        d3.csv(csv_dir + csvs[cbal], function (d) {
             return {
                 stimulus: d.stimulus,
                 data: "target",
-                word1: d.word1,
-                word2: d.word2,
-                dom_word: d.dom_word,
-                sec_is_foil: d.sec_is_foil == 1
+                word1: d["acc.word1"],
+                word2: d["acc.word2"],
+                dom_word: parseInt(d["acc.dom_pos"]),
+                sec_is_foil: d["acc.sec_is_foil"] === "1"
             };
         }).then(function (test_stimuli) {
             const test_procedure = {

@@ -123,7 +123,7 @@ jsPsych.plugins['wc-trial'] = (function () {
             html += `<p><strong>${trial.word1}</strong></p>`;
             html += slider_div("2");
             html += `<p><strong>${trial.word2}</strong></p>`;
-            html += `<button id="wc_accuracy-next" class="jspsych-btn" style="visibility:hidden">${trial.button_label}</button>`;  // submit
+            html += `<button id="wc_accuracy-next" class="jspsych-btn" style="visibility:visible">${trial.button_label}</button>`;  // submit
             div.innerHTML += html;
             display_element.appendChild(div);
 
@@ -139,10 +139,10 @@ jsPsych.plugins['wc-trial'] = (function () {
                 response.word1_response = display_element.querySelector('#wc_accuracy-slider1').value;
                 response.word2_response = display_element.querySelector('#wc_accuracy-slider2').value;
                 if (trial.sec_is_foil) {
-                    if (trial.dom_word == 1 && response.word2_response > 15) {
+                    if (trial.dom_word === 1 && response.word2_response > 15) {
                         alert("Are you sure about that? One of your ratings does not seem accurate.");
                         return;
-                    } else if (trial.dom_word == 2 && response.word1_response > 15) {
+                    } else if (trial.dom_word === 2 && response.word1_response > 15) {
                         alert("Are you sure about that? One of your ratings does not seem accurate.");
                         return;
                     }
@@ -163,8 +163,9 @@ jsPsych.plugins['wc-trial'] = (function () {
                     "rt": response.rt,
                     "word1_response": response.word1_response,
                     "word2_response": response.word2_response,
-                    "dom_word": trial.dom_word
-            };
+                    "dom_word": trial.dom_word,
+                    "dominant": trial.dom_word === 1 ? trial.word1 : trial.word2
+                };
 
                 display_element.innerHTML = '';
 
