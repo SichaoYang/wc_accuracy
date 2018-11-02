@@ -28,10 +28,13 @@ const wc = (function () {
         /**
          * generate a random integer between 1 and n
          * @param n - the upper limit of the generated random integer
+         * @param w - the list of weight assigned to each integer as the relative probability of generating it
          * @returns {number} the generated random integer
          */
-        gen_rndn: function(n) {
-            return Math.floor(Math.random() * n);
+        gen_rndn: function(w) {
+            const l = [];
+            for (let i in w) for (let j = 0; j < w[i]; j++) l.push(i);
+            return l[Math.floor(Math.random() * l.length)];
         },
 
         participant: function () {
@@ -174,7 +177,7 @@ const wc = (function () {
                 save: function(raw_data) {
                     const json = make_json(raw_data);
                     console.log(json);
-                    if (isLCNL)     sendJSONData(json, id);  // /static/common/js/lcnl-helpers.js
+                    if (isLCNL)     sendJSONData(json, id === "" ? new Date().getTime().toString() : id);  // /static/common/js/lcnl-helpers.js
                     else if (isPHP) save_php(json);
                     else            save_blob(json2csv(json));
 

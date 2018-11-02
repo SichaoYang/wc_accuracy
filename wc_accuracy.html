@@ -44,6 +44,12 @@
     const csvs = [];  // add csv file names like ["data1.csv", "data2.csv"]
     for (let i = 1; i <= 16; i++) csvs.push(`cbal.acc.${i < 10 ? "0" : ""}${i.toString()}.csv`);
 
+    /** Probability distribution of the cbal files: integer array */
+    const csv_porb = [3, 3, 2, 3,
+                      3, 3, 0, 0,
+                      3, 1, 1, 0,
+                      2, 0, 3, 3];
+
     /* create timeline */
     const timeline = [];
 
@@ -131,7 +137,7 @@
 
     let id;
     const code = wc.gen_code();
-    const cbal = wc.gen_rndn(csvs.length);
+    const cbal = wc.gen_rndn(csv_porb);
     /* Place later steps in the callback function, or they will not wait for the former steps.
     Instead, they will be executed right away asynchronously */
     wc.participant().id(function (participant) {
@@ -159,7 +165,7 @@
                 timeline_variables: test_stimuli, //.slice(0, 1),
                 randomize_order: false
             };
-            timeline.push(consent, welcome, instruction1, instruction2, instruction3);
+            // timeline.push(consent, welcome, instruction1, instruction2, instruction3);
             timeline.push(test_procedure);
             timeline.push(survey);
             timeline.push(thanks_page);
