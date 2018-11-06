@@ -1,0 +1,20 @@
+.textbody_bymark {
+    display: inline-block;
+    text-align: center;
+    width: 45px;
+}
+td {
+    line-height: 2;
+    vertical-align: top;
+    text-align: left;
+}
+input[type=number] {
+    font-size: 20px;
+    width: 100px;
+}
+input[type=text], select{
+    font-size: 20px;
+}
+button {
+    font-size: 24px;
+}

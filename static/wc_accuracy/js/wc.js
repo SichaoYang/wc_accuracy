@@ -162,15 +162,15 @@ const wc = (function () {
 
             /** save data to a csv file */
             function save_blob(csv_str) {
-                const filename = "result.csv";
+                const filename = `local_${id}.csv`;
                 const blobToSave = new Blob([csv_str], {
                     type: 'text/plain',
                     endings: 'native'
                 });
                 const blobURL = window.URL.createObjectURL(blobToSave);
                 jsPsych.getDisplayElement().insertAdjacentHTML('beforeend',  // create a invisible <a> for download
-                    `<a id="download" style="display:none;" download="${filename}" href="${blobURL}"></a>`);
-                document.getElementById('download').click();
+                    `<a id="wc-blob" style="display: none;" download="${filename}" href="${blobURL}"></a>`);
+                // document.getElementById('wc-blob').click();
             }
 
             return {

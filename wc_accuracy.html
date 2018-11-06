@@ -8,6 +8,7 @@
     <script src="/static/wc_accuracy/js/wc.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/jspsych.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-preset.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-consent.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-intro.js"></script>
     <script src="/static/wc_accuracy/jspsych-6.0.3/plugins/wc-trial.js"></script>
@@ -24,8 +25,11 @@
         document.body.style.zoom = window.innerHeight / bestHeight;
     }
 
+    /** Whether the experiment runs offline */
+    const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "";
+
     /** Whether the experiment is running inside Mechanical Turk */
-    const isTurk = !jsPsych.turk.turkInfo().outsideTurk;
+    const isTurk = !isLocal && !jsPsych.turk.turkInfo().outsideTurk;
 
     /** Whether the experiment is running on the lab server */
     const isLCNL = isTurk || (location.hostname === "talk.psych.wisc.edu");
@@ -45,103 +49,108 @@
     for (let i = 1; i <= 16; i++) csvs.push(`cbal.acc.${i < 10 ? "0" : ""}${i.toString()}.csv`);
 
     /** Probability distribution of the cbal files: integer array */
-    const csv_porb = [3, 3, 2, 3,
-                      3, 3, 0, 0,
-                      3, 1, 1, 0,
-                      2, 0, 3, 3];
-
-    /* create timeline */
-    const timeline = [];
-
-
-
-    /*  *** Informed Consent ***  */
-    const consent = {
-        type: "wc-consent",
-        info: `<div style = "display: inline-block; text-align: left; width: 900px;">` +
-            `<p>The HIT you are about to do is sponsored by the Univeristy of Wisonsin-Madison.  You will hear or read sentences or words or view pictures or words on the computer screen.  You will be asked to do one or more of the following:  read aloud, recall sentences, words, or pictures that you have heard or seen during the experiment, complete phrases to make sentences, make up new sentences and say them aloud or write them down, rate the plausibility or other features of the words, sentences or pictures, describe pictures using speech,writing, or gestures, answer questions about speech you have heard, click on pictures on the screen or touch pictures on a touch screen or to press keys on the keyboard in response to the words, sentences or pictures.  HIT instructions will be provided on the next screen.</p>` +
-            `<p>This task has no anticipated risks nor direct benefits.  If you have any questions or concerns about this HIT please contact the principal investigator: Dr. Maryellen MacDonald at mcmacdonald@wisc.edu.  If you are not satisfied with the response of the research team, have more questions, or want to talk with someone about your rights as a research participant, you should contact University of Wisconsin's Education Research and Social & Behavioral Science IRB Office at 608-263-2320.  You are free to decline to participate, to end participation at any time for any reason.</p>` +
-            `</div>`
-    };
-
-    /*  *** Welcome screen ***  */
-    const welcome = {
-        type: "html-keyboard-response",
-        stimulus: `<div style = "display: inline-block; text-align: center; width: 500px;">` +
-            `Thank you for your participation. Please press any key to continue.</div>`
-    };
-
-    /*  *** Instruction *** */
-    const instruction1 = {
-        type: "html-keyboard-response",
-        stimulus: `<div style = "display: inline-block;text-align: center; width: 500px;">` +
-            `<p>In this task you'll see a picture and two names. ` +
-            `You'll rate how well each name describes the picture. ` +
-            `Underneath each name will be a slider with a numerical scale. ` +
-            `You will rate each name on a range from 1-7. Seven (7) ` +
-            `means the name is perfectly accurate for the picture. One (1) ` +
-            `means it is misleading. You should use the numbers in between ` +
-            `for names that are some of both.</p></div>`
-    };
-
-    const instruction2 = {
-        type: "wc-intro",  // customized plugin
-        prompt_above: `<p style = "text-align: center;">Here is a screenshot of how someone might have done this task. </p>`,
-        image: "ex7_6.JPG",
-        prompt_below: `They thought one name was slightly less accurate than the other. Press any key to continue.`
-    };
-
-    const instruction3 = {
-        type: "wc-trial",
-        stimulus: "obj000triangle.jpg",
-        labels: ['1', '2', '3', '4', '5', '6', '7'],
-        prompt: `<div style = "display: inline-block; text-align: left; width: 600px;">` +
-            `Now try it yourself. Move the slider above each name to rate it.` +
-            `You can also click directly on the line to place the slider.` +
-            `It is fine to have the slider in the same position for both names.</div>`,
-        word1: "shape",
-        word2: "triangle",
-        dom_word: 2,
-        sec_is_foil: 0,
-        data: {test_part: jsPsych.timelineVariable("data")}
-    };
-
-    const fixation = {
-        type: "html-keyboard-response",
-        stimulus: '<div style = "font-size: 60px;">+</div>',
-        choices: jsPsych.NO_KEYS,
-        trial_duration: 450,
-        data: {test_part: 'fixation'}
-    };
-
-    // counter balancing: give different participants different sets of images corresponding to their index number
-    const slider_trial = {
-        type: "wc-trial",
-        stimulus: jsPsych.timelineVariable("stimulus"),
-        labels: ['1', '2', '3', '4', '5', '6', '7'],
-        prompt: "How accurate are these names for this picture?",
-        word1: function () {
-            return jsPsych.timelineVariable("word1", true)
-        },
-        word2: function () {
-            return jsPsych.timelineVariable("word2", true)
-        },
-        dom_word: function () {
-            return jsPsych.timelineVariable("dom_word", true)
-        },
-        sec_is_foil: function () {
-            return jsPsych.timelineVariable("sec_is_foil", true)
-        },
-        data: {test_part: jsPsych.timelineVariable("data")}
-    };
+    const csv_porb = [0, 3, 2, 0,
+                      2, 0, 0, 0,
+                      0, 0, 2, 0,
+                      2, 0, 0, 3];
 
     let id;
+    let cbal = wc.gen_rndn(csv_porb);
     const code = wc.gen_code();
-    const cbal = wc.gen_rndn(csv_porb);
-    /* Place later steps in the callback function, or they will not wait for the former steps.
-    Instead, they will be executed right away asynchronously */
-    wc.participant().id(function (participant) {
+
+    if (isLocal) jsPsych.init({
+        timeline: [{
+            type: "wc-preset",
+            callback: main
+        }]
+    });
+    else wc.participant().id(main);
+
+    function main(participant) {
         id = participant;
+        /* create timeline */
+        const timeline = [];
+
+        /*  *** Informed Consent ***  */
+        const consent = {
+            type: "wc-consent",
+            info: `<div style = "display: inline-block; text-align: left; width: 900px;">` +
+                `<p>The HIT you are about to do is sponsored by the Univeristy of Wisonsin-Madison.  You will hear or read sentences or words or view pictures or words on the computer screen.  You will be asked to do one or more of the following:  read aloud, recall sentences, words, or pictures that you have heard or seen during the experiment, complete phrases to make sentences, make up new sentences and say them aloud or write them down, rate the plausibility or other features of the words, sentences or pictures, describe pictures using speech,writing, or gestures, answer questions about speech you have heard, click on pictures on the screen or touch pictures on a touch screen or to press keys on the keyboard in response to the words, sentences or pictures.  HIT instructions will be provided on the next screen.</p>` +
+                `<p>This task has no anticipated risks nor direct benefits.  If you have any questions or concerns about this HIT please contact the principal investigator: Dr. Maryellen MacDonald at mcmacdonald@wisc.edu.  If you are not satisfied with the response of the research team, have more questions, or want to talk with someone about your rights as a research participant, you should contact University of Wisconsin's Education Research and Social & Behavioral Science IRB Office at 608-263-2320.  You are free to decline to participate, to end participation at any time for any reason.</p>` +
+                `</div>`
+        };
+
+        /*  *** Welcome screen ***  */
+        const welcome = {
+            type: "html-keyboard-response",
+            stimulus: `<div style = "display: inline-block; text-align: center; width: 500px;">` +
+                `Thank you for your participation. Please press any key to continue.</div>`
+        };
+
+        /*  *** Instruction *** */
+        const instruction1 = {
+            type: "html-keyboard-response",
+            stimulus: `<div style = "display: inline-block;text-align: center; width: 500px;">` +
+                `<p>In this task you'll see a picture and two names. ` +
+                `You'll rate how well each name describes the picture. ` +
+                `Underneath each name will be a slider with a numerical scale. ` +
+                `You will rate each name on a range from 1-7. Seven (7) ` +
+                `means the name is perfectly accurate for the picture. One (1) ` +
+                `means it is misleading. You should use the numbers in between ` +
+                `for names that are some of both.</p></div>`
+        };
+
+        const instruction2 = {
+            type: "wc-intro",  // customized plugin
+            prompt_above: `<p style = "text-align: center;">Here is a screenshot of how someone might have done this task. </p>`,
+            image: "ex7_6.JPG",
+            prompt_below: `They thought one name was slightly less accurate than the other. Press any key to continue.`
+        };
+
+        const instruction3 = {
+            type: "wc-trial",
+            stimulus: "obj000triangle.jpg",
+            labels: ['1', '2', '3', '4', '5', '6', '7'],
+            prompt: `<div style = "display: inline-block; text-align: left; width: 600px;">` +
+                `Now try it yourself. Move the slider above each name to rate it.` +
+                `You can also click directly on the line to place the slider.` +
+                `It is fine to have the slider in the same position for both names.</div>`,
+            word1: "shape",
+            word2: "triangle",
+            dom_word: 2,
+            sec_is_foil: 0,
+            data: {test_part: jsPsych.timelineVariable("data")}
+        };
+
+        const fixation = {
+            type: "html-keyboard-response",
+            stimulus: '<div style = "font-size: 60px;">+</div>',
+            choices: jsPsych.NO_KEYS,
+            trial_duration: 450,
+            data: {test_part: 'fixation'}
+        };
+
+        // counter balancing: give different participants different sets of images corresponding to their index number
+        const slider_trial = {
+            type: "wc-trial",
+            stimulus: jsPsych.timelineVariable("stimulus"),
+            labels: ['1', '2', '3', '4', '5', '6', '7'],
+            prompt: "How accurate are these names for this picture?",
+            word1: function () {
+                return jsPsych.timelineVariable("word1", true)
+            },
+            word2: function () {
+                return jsPsych.timelineVariable("word2", true)
+            },
+            dom_word: function () {
+                return jsPsych.timelineVariable("dom_word", true)
+            },
+            sec_is_foil: function () {
+                return jsPsych.timelineVariable("sec_is_foil", true)
+            },
+            data: {test_part: jsPsych.timelineVariable("data")}
+        };
+
         const survey = {
             type: "wc-survey"
         };
@@ -162,17 +171,18 @@
                 /* *** Flow of the experiment: If you wanted to, say, add a fixation between word1 and word2,
                 it would look like "timeline:[fixation,word1,fixation,word2], etc."*** */
                 timeline: [fixation, slider_trial],
-                timeline_variables: test_stimuli, //.slice(0, 1),
+                timeline_variables: test_stimuli,
+                // timeline_variables: test_stimuli.slice(0, 1),
                 randomize_order: false
             };
-            // timeline.push(consent, welcome, instruction1, instruction2, instruction3);
+            timeline.push(consent, welcome, instruction1, instruction2, instruction3);
             timeline.push(test_procedure);
-            timeline.push(survey);
+            if (!isLocal) timeline.push(survey);
             timeline.push(thanks_page);
             jsPsych.init({
                 timeline: timeline
             });
         });
-    });
+    }
 </script>
 </html>

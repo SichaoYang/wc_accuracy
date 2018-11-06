@@ -20,11 +20,16 @@ jsPsych.plugins["wc-final"] = (function () {
         wc.data().save(data);
 
         const div = document.createElement("div");
-        div.innerHTML = `<div><p>Thank you for your participation.`;
-        if (isTurk) div.innerHTML += ` Your unique code is:</p>\`<p style = 'font-size:40px'>${code}`;
-        div.innerHTML += `</p></div>`;
-
+        div.innerHTML = `<div><p>Thank you for your participation.
+            ${isTurk ? ` Your unique code is:</p><p style ="font-size:40px"}>${code}` : ''}
+        </p>
+        ${isLocal ? '<button id="wc-download">Export Collected Data</button>' : ''}
+        </div>`;
         display_element.appendChild(div);
+
+        document.querySelector('#wc-download').addEventListener('click', function () {
+            document.getElementById('wc-blob').click();
+        });
     };
 
     return plugin;
