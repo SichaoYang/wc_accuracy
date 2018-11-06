@@ -23,12 +23,13 @@ jsPsych.plugins["wc-preset"] = (function() {
         display_element.innerHTML = `<div>
             <table>
                 <tr>
-                    <td>participant:</td>
+                    <td>participant id:</td>
                     <td><input id="wc-id" type="text" size="20"></td>
                 </tr>
                 <tr>
-                    <td>cbal file:</td>
+                    <td>cbal csv file:</td>
                     <td><select id="wc-cbal">
+                        <option value="-1">Random</option>
                         ${csvs.map((csv, i) => `<option value="${i}">${csv}</option>`).join('')}
                     </select></td>
                 </tr>
@@ -36,9 +37,11 @@ jsPsych.plugins["wc-preset"] = (function() {
             <button id="wc-preset">Start Experiment</button>          
         </div>`;
         document.querySelector('#wc-preset').addEventListener('click', function () {
-            id = document.querySelector('#wc-id').value;
-            cbal = parseInt(document.querySelector('#wc-cbal').value);
+            const new_id = document.querySelector('#wc-id').value;
+            const new_cbal = parseInt(document.querySelector('#wc-cbal').value);
             display_element.innerHTML = '';
+            if (new_id !== "") id = new_id;
+            if (new_cbal >= 0) cbal = new_cbal;
             trial.callback(id);
         });
     };

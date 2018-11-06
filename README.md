@@ -9,7 +9,16 @@
 4. Open the browser and visit : ```http://localhost:8000/wc_accuracy.html```
 5. Input the participant id into the entry
 6. Select the counter balance csv file to use from the drop-down list
-7. Click "Start Experiment"
+7. Click "Start Experiment" to start the experiment
+
+Note: by selecting "Random", a counter balance csv file will be randomly picked with a probability 
+in proportion to its weight assigned in the variable *csv_porb* in *wc_accuracy.html*.
+Edit it to modify the probability distribution specified if needed.
 
 ## Collect data
-After the 
+The experiment ends up staying on the last page.
+
+Click "Export Collected Data" to download the data collected.
+
+## Restart the experiment
+Reload the page.

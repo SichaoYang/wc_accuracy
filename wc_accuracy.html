@@ -25,6 +25,8 @@
         document.body.style.zoom = window.innerHeight / bestHeight;
     }
 
+    const isTest = false;  // set to true to skip the instructions and run only one trial
+
     /** Whether the experiment runs offline */
     const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "";
 
@@ -171,11 +173,10 @@
                 /* *** Flow of the experiment: If you wanted to, say, add a fixation between word1 and word2,
                 it would look like "timeline:[fixation,word1,fixation,word2], etc."*** */
                 timeline: [fixation, slider_trial],
-                timeline_variables: test_stimuli,
-                // timeline_variables: test_stimuli.slice(0, 1),
+                timeline_variables: isTest ? test_stimuli.slice(0, 1) : test_stimuli,
                 randomize_order: false
             };
-            timeline.push(consent, welcome, instruction1, instruction2, instruction3);
+            if (!isTest) timeline.push(consent, welcome, instruction1, instruction2, instruction3);
             timeline.push(test_procedure);
             if (!isLocal) timeline.push(survey);
             timeline.push(thanks_page);
