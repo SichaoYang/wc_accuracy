@@ -131,6 +131,7 @@ const wc = (function () {
                 return json;
             }
 
+            // Adapted from Christian Landgren on 11/06/2018
             // https://stackoverflow.com/questions/8847766/how-to-convert-json-to-csv-format-and-store-in-a-variable
             function json2csv(json) {
                 const replacer = (key, value) => value === null ? '' : value; // handle null values
